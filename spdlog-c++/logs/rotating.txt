@@ -1,0 +1,2 @@
+[2019-09-11 15:55:46 +08:00] [rotating] [---I---] [thread 44562] send to logs/rotating.txt
+[2019-09-11 16:00:50 +08:00] [rotating] [---I---] [thread 45106] send to logs/rotating.txt

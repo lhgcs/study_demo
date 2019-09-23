@@ -1,0 +1,156 @@
+#!/bin/bash
+
+### 
+# @Description: 从码云更新程序源码（不用手动输入用户名密码）
+ # @Version: 1.0
+ # @Autor: lhgcs
+ # @Date: 2019-08-26 15:50:12
+ # @LastEditors: lhgcs
+ # @LastEditTime: 2019-09-16 17:02:21
+ ###
+
+# 安装
+# sudo apt-get install expect
+
+# 存放路径
+saveDir="/home/ubuntu/Desktop/src"
+
+
+###
+ # @description: 打印输出
+ # @param {type} 
+ # @return: 
+###
+print_info() {
+    echo -e "\033[47;30m $1 \033[0m"
+}
+
+
+###
+ # @description: 克隆源码
+ # @param {type} 
+ # @return: 
+###
+clone_source() {
+# 注意：except嵌入shell时，无法传参到export，使用环境变量间接传入
+export giteeSSH=$1
+
+# 不是在/bin/expect
+/usr/bin/expect <<\EOF
+# 设置变量
+# 码云
+set hostname $env(giteeSSH)
+# 用户名
+set username "onj123"
+# 密码
+set password ""
+# 超时
+set timeout 300
+
+send_user "$hostname\n";
+send_user "$username\n";
+send_user "$password\n";
+
+# 启动新的进程
+spawn git clone $hostname
+
+# 多分支模式，匹配其中的一个字符串
+expect {
+    "user" { send "$username\r" }
+    "pass" { send "$password\r" }
+}
+EOF
+export giteeSSH
+}
+
+
+###
+ # @description: 更新源码
+ # @param {type} 
+ # @return: 
+###
+pull_source() {
+export giteeSSH=$1
+
+# 不是在/bin/expect
+/usr/bin/expect <<\EOF
+# 设置变量
+# 码云
+set hostname $env(giteeSSH)
+# 用户名
+set username "onj123"
+# 密码
+set password "java120570"
+# 超时
+set timeout 300
+
+send_user "$hostname\n";
+send_user "$username\n";
+send_user "$password\n";
+
+# 启动新的进程
+spawn git pull $hostname
+
+# 多分支模式，匹配其中的一个字符串
+expect {
+    "user" { send "$username\r" }
+    "pass" { send "$password\r" }
+}
+EOF
+export giteeSSH
+}
+
+###
+ # @description: 获取源码（参数：源码链接）
+ # @param {type} 
+ # @return: 
+###
+git_source(){
+    old_dir=$(cd $(dirname $0); pwd)
+
+    temp=$1
+    # 从右往左查找/，并截取/之后的部分
+    projectName=${temp##*/}
+    # 从右往左查找.，并截取.之前的部分
+    projectName=${projectName%%.*}
+    # 项目名称
+    print_info ${projectName}
+    # 存放路径
+    projectDir=${saveDir}/${projectName}
+
+    # 已存在路径，更新
+    if [ -d ${projectDir} -a "$(ls -A ${projectDir})" != "" ]; then
+        cd ${projectDir}
+        pull_source $1
+        if [ $? == 0 ];then
+            print_info "${projectDir} update ok"
+        else
+            print_info "${projectDir} update fail"
+        fi
+    else
+
+        if [ -d ${projectDir} ]; then
+            rm -rf ${projectDir}
+        fi
+
+        if [ ! -d ${saveDir} ]; then
+            mkdir -p ${saveDir}
+        fi
+        
+        cd ${saveDir}
+        clone_source $1
+        if [ $? == 0 ];then
+            print_info "${projectDir} clone"
+        else
+            print_info "${projectDir} clone fail"
+        fi
+    fi
+    
+    cd ${old_dir}
+}
+
+# 获取源码
+git_source "git@gitee.com:jendonyuen/signal-server.git"
+git_source "git@gitee.com:jendonyuen/node-server.git"
+git_source "git@gitee.com:jendonyuen/pose-server.git"
+git_source "git@gitee.com:jendonyuen/main-server.git"

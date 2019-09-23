@@ -1,0 +1,42 @@
+#!/usr/bin/expect
+
+### 
+# @Description: ssh登录脚本
+ # @Version: 1.0
+ # @Autor: lhgcs
+ # @Date: 2019-08-26 15:18:10
+ # @LastEditors: lhgcs
+ # @LastEditTime: 2019-08-26 15:40:01
+ ###
+
+#  示例：sudo ./ssh 192.168.7.16 rock rock
+
+# 超时时间（超过3秒没有expect内容出现，则退出）
+set timeout 3             
+# IP
+set hostname [lindex $argv 0] 
+# 用户名
+set username [lindex $argv 1] 
+# 密码
+set password [lindex $argv 2]
+
+# 查看变量
+send_user "$hostname\n";
+send_user "$username\n";
+send_user "$password\n";
+
+
+# ssh连接 
+spawn ssh $username@$hostname
+# 查询子串
+expect "yes/no"
+# 向标准输入写入字符串
+send "yes\r"
+
+# 查询子串
+expect "password:"
+# 向标准输入写入字符串
+send "$password\r"
+
+interact
+expect eof 

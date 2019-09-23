@@ -1,0 +1,50 @@
+##
+ # @Description: gcc 编译
+ # @Version: 1.0
+ # @Autor: lhgcs
+ # @Date: 2019-07-29 18:29:52
+ # @LastEditors: lhgcs
+ # @LastEditTime: 2019-09-02 15:40:30
+##
+
+ 
+# 指令编译器(-o：指定生成可执行文件的名称, -c：只编译不链接，只生成目标文件, -g：添加gdb调试选项)
+CC = g++
+SOURCE = main.cpp
+OBJECTS = main.o
+TARGET = main
+
+# 指定搜索头文件的路径
+INCLUDE = $(shell pkg-config --cflags opencv)
+# 指定库文件搜索路径
+LIBS = $(shell pkg-config --libs opencv)
+# 或者一次性
+#ALL = `pkg-config --cflags --libs opencv`
+
+
+# 打印输出
+$(warning start)
+$(warning $(CC))
+$(warning $(TARGET))
+$(warning $(INCLUDE))
+$(warning $(LIBS))
+# $(warning $(ALL))
+
+
+$(OBJECTS) : $(SOURCE)
+	$(CC) -c $(SOURCE)
+
+$(TARGET) : $(OBJECTS)
+	$(CC) -o $(TARGET) $(OBJECTS)
+# $(INCLUDE) $(LIBS)
+
+
+# 伪目标
+#.PHONY : clean 
+# clean没有被第一个目标文件直接或间接关联，那么它后面所定义的命令将不会被自动执行
+#clean :
+	#-出现问题时继续执行
+#	-rm -rf *.o $(TARGET)
+
+
+g++ -o main main.cpp -I/usr/local/include/opencv -I/usr/local/include -L/usr/local/lib -lopencv_dnn -lopencv_ml -lopencv_objdetect -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_calib3d -lopencv_features2d -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_video -lopencv_photo -lopencv_imgproc -lopencv_flann -lopencv_core

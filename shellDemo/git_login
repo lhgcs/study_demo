@@ -1,0 +1,47 @@
+#!/usr/bin/expect
+
+### 
+# @Description: ssh登录脚本
+ # @Version: 1.0
+ # @Autor: lhgcs
+ # @Date: 2019-08-26 15:18:10
+ # @LastEditors: lhgcs
+ # @LastEditTime: 2019-08-26 17:04:58
+ ###
+
+#  示例：
+# 克隆：./test ~/Desktop/Demo/shellDemo clone git@gitee.com:jendonyuen/signal-server.git
+# 更新：./test ~/Desktop/Demo/shellDemo/signal-server pull git@gitee.com:jendonyuen/signal-server.git
+
+
+# 设置变量
+# 目录
+set objectDir [lindex $argv 0]
+# 命令
+set objectCmd [lindex $argv 1]
+# 码云
+set hostname [lindex $argv 2]
+# 用户名
+set username "onj123"
+# 密码
+set password ""
+# 超时
+set timeout 300
+
+send_user "$hostname\n";
+send_user "$objectCmd\n";
+send_user "$objectDir\n";
+send_user "$username\n";
+send_user "$password\n";
+
+cd $objectDir
+
+# 启动新的进程
+spawn git $objectCmd $hostname
+
+# 多分支模式，匹配其中的一个字符串
+expect {
+    "user" { send "$username\r" }
+    "pass" { send "$password\r" }
+}
+

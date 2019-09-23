@@ -1,0 +1,55 @@
+##
+ # @Description: gcc 编译
+ # @Version: 1.0
+ # @Autor: lhgcs
+ # @Date: 2019-07-29 18:29:52
+ # @LastEditors: lhgcs
+ # @LastEditTime: 2019-09-02 15:40:30
+##
+
+ 
+# 指令编译器(-o：指定生成可执行文件的名称, -c：只编译不链接，只生成目标文件, -g：添加gdb调试选项)
+CC=gcc
+
+# 目标文件
+TARGET=main
+
+# 指定搜索头文件的路径
+INC = -I /usr/include 
+# 指定库文件搜索路径
+LIBS = -L /usr/lib/x86_64-linux-gnu
+
+# 打印输出
+$(warning start)
+$(warning $(CC))
+$(warning $(TARGET))
+$(warning $(INC))
+$(warning $(LIBS))
+
+
+# 方法1：指定文件编译
+# $(TARGET) : main.o test.o
+# 	$(CC) main.o test.o -o $(TARGET)
+# main.o :
+# 	$(CC) -c main.c -o main.o
+# test.o :
+# 	$(CC) -c test.c -o test.o
+
+
+# 方法2：把所有c文件编译为o文件
+#%.o:%.c
+#	$(CC) $(CFLAGS) $(INC) -o $@ -c $<
+
+
+# 方法3：自动推导
+objects = main.o test.o
+$(TARGET) : $(objects)
+	$(CC) $(INC) $(LIBS) -o $(TARGET) $(objects)
+
+
+# 伪目标
+.PHONY : clean 
+# clean没有被第一个目标文件直接或间接关联，那么它后面所定义的命令将不会被自动执行
+clean :
+	#-出现问题时继续执行
+	-rm -rf *.o $(TARGET)
