@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "libuvc.h": "c",
+        "array": "cpp",
+        "string": "cpp"
+    }
+}
