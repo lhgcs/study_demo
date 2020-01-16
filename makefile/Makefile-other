@@ -1,0 +1,31 @@
+CROSS = ""
+#CROSS = arm-linux-androideabi-
+CC = $(CROSS)gcc
+CXX = $(CROSS)g++
+DEBUG = -g -O2
+CFLAGS = $(DEBUG) -Wall -c
+RM = rm -rf
+
+TARGET = zxcz
+HEADER_PATH = -I./include/
+LIB_PATH = -L.
+LIBS = -lzxcz
+# LIBS = libzxcz.a
+
+SRCS = zxcz.c
+
+OBJS = $(patsubst %.c, %.o, $(SRCS))
+
+
+$(TARGET) : $(OBJS)
+	$(CC) $^ -o $@ $(LIB_PATH) $(LIBS)
+	
+$(OBJS):%.o : %.c
+	$(CC) $(CFLAGS) $< -o $@ $(HEADER_PATH)
+# -std=c++11
+clean:
+	$(RM) $(OBJS) *.o
+	$(RM) $(TARGET)
+
+	
+	
